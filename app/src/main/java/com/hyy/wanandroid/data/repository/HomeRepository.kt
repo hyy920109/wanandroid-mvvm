@@ -7,5 +7,5 @@ import com.hyy.wanandroid.data.bean.HomeArticleList
 
 interface HomeRepository {
 
-    suspend fun requestHomeArticles(page: Int) : LiveData<ResultData<HomeArticleList>>
+    suspend fun requestHomeArticles(page: Int) : ResultData<HomeArticleList>
 }

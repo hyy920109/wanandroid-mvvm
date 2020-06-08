@@ -17,9 +17,3 @@ fun <T> BaseModel<T>.transform() : ResultData<T> {
     }
 }
 
-
-fun CoroutineScope.startRequest(
-
-) {
-
-}

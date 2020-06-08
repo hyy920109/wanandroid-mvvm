@@ -9,7 +9,7 @@ import com.hyy.wanandroid.data.repository.HomeRepository
 
 class HomeRepositoryImpl(private val store: Store) : HomeRepository {
 
-    override suspend fun requestHomeArticles(page: Int): LiveData<ResultData<HomeArticleList>> {
+    override suspend fun requestHomeArticles(page: Int): ResultData<HomeArticleList> {
         return store.remoteProvider().getHomeArticle(page)
     }
 }

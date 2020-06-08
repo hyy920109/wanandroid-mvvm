@@ -1,7 +1,6 @@
 package com.hyy.wanandroid.data.model
 
 
-import com.hyy.wanandroid.data.Mapper
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -21,4 +20,4 @@ data class HomeArticleListModel(
     val size: Int,
     @Json(name = "total")
     val total: Int
-) : Mapper
+)
