@@ -16,9 +16,9 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
 
-    private val _homeArticles = MediatorLiveData<ResultData<HomeArticleList>>()
+    private val _homeArticles = MutableLiveData<ResultData<HomeArticleList>>()
 
-    val homeArticleList : LiveData<ResultData<HomeArticleList>>
+    val homeArticleList : MutableLiveData<ResultData<HomeArticleList>>
     get() = _homeArticles
 
     private val pageChannel: Channel<Int> = Channel<Int>()
@@ -64,7 +64,7 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
             }.onEach {
                 Log.d(TAG, "data status -->${it.status}")
             }.collect{
-
+                _homeArticles.postValue(it)
             }
 
         }

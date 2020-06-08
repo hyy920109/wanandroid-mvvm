@@ -1,15 +1,9 @@
 package com.hyy.wanandroid.data.network
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
-import com.hyy.wanandroid.data.RESPONSE_CODE_UNKNOWN
 import com.hyy.wanandroid.data.ResultData
 import com.hyy.wanandroid.data.WanAndroidApi
 import com.hyy.wanandroid.data.bean.HomeArticleList
-import com.hyy.wanandroid.data.model.HomeArticleListModel
 import com.hyy.wanandroid.data.toDomain
-import kotlinx.coroutines.flow.*
 
 //
 class RemoteProvider(private val networkClient: NetworkClient<WanAndroidApi>) {
