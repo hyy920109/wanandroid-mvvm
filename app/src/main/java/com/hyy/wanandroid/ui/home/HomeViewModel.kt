@@ -22,22 +22,22 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
     get() = _homeArticles
 
     private val pageChannel: Channel<Int> = Channel<Int>()
-
+    
     init {
+        Log.d(TAG, "init: ${homeArticleList.value?.data?.size}")
        observePageChanged()
        initPage()
     }
 
     private fun initPage() {
         viewModelScope.launch {
-            Log.d(TAG, "send --> 0")
-
             pageChannel.send(0)
         }
     }
 
     @ExperimentalCoroutinesApi
     private fun observePageChanged() {
+        Log.d(TAG, "observePageChanged: ")
         viewModelScope.launch{
             pageChannel.receiveAsFlow()
                 .onEach {page->
