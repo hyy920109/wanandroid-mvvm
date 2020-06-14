@@ -28,4 +28,12 @@ class NotificationsFragment : Fragment() {
         })
         return root
     }
+
+    companion object {
+
+        const val TAG = "NotificationsFragment"
+        fun create() : NotificationsFragment {
+            return NotificationsFragment()
+        }
+    }
 }

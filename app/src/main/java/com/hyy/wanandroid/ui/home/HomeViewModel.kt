@@ -8,12 +8,14 @@ import com.hyy.wanandroid.data.RESPONSE_MSG_UNKNOWN
 import com.hyy.wanandroid.data.ResultData
 import com.hyy.wanandroid.data.bean.HomeArticleList
 import com.hyy.wanandroid.data.network.RequestStatus
+import com.hyy.wanandroid.data.network.request
 import com.hyy.wanandroid.data.repository.HomeRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
+@ExperimentalCoroutinesApi
 class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
 
     private val _homeArticles = MutableLiveData<ResultData<HomeArticleList>>()
@@ -50,29 +52,17 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
 
     private fun fetchHomeArticles(page: Int) {
         viewModelScope.launch {
-            flow {
-                emit(ResultData.start())
-                val data = homeRepository.requestHomeArticles(page)
-                emit(data)
-            }.catch {e->
-                emit(ResultData(
-                    data = null,
-                    status = RequestStatus.ERROR,
-                    errorMsg = e.message ?: RESPONSE_MSG_UNKNOWN,
-                    errorCode = RESPONSE_CODE_UNKNOWN
-                ))
-            }.onEach {
-                Log.d(TAG, "data status -->${it.status}")
-            }.collect{
+            request {
+                homeRepository.requestHomeArticles(page)
+            }.collect {
                 _homeArticles.postValue(it)
             }
-
         }
     }
 
     fun loadMore() {
         viewModelScope.launch {
-            pageChannel.send(pageChannel.poll() ?: 0)
+            pageChannel.send((pageChannel.poll() ?: 0)+1)
         }
     }
 

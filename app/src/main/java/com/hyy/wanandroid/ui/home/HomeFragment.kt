@@ -72,5 +72,9 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
     companion object {
         const val TAG = "HomeFragment"
+
+        fun create() : HomeFragment{
+            return HomeFragment()
+        }
     }
 }

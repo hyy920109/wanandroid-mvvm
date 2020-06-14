@@ -28,4 +28,13 @@ class DashboardFragment : Fragment() {
         })
         return root
     }
+
+    companion object {
+
+        const val TAG = "DashboardFragment"
+
+        fun create() : DashboardFragment {
+            return DashboardFragment()
+        }
+    }
 }
