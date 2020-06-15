@@ -1,13 +1,8 @@
 package com.hyy.wanandroid.ui.home
 
-import android.util.Log
 import androidx.lifecycle.*
-import com.hyy.wanandroid.data.RESPONSE_CODE_SUCCESS
-import com.hyy.wanandroid.data.RESPONSE_CODE_UNKNOWN
-import com.hyy.wanandroid.data.RESPONSE_MSG_UNKNOWN
 import com.hyy.wanandroid.data.ResultData
 import com.hyy.wanandroid.data.bean.HomeArticleList
-import com.hyy.wanandroid.data.network.RequestStatus
 import com.hyy.wanandroid.data.network.request
 import com.hyy.wanandroid.data.repository.HomeRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,15 +15,14 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
 
     private val _homeArticles = MutableLiveData<ResultData<HomeArticleList>>()
 
-    val homeArticleList : MutableLiveData<ResultData<HomeArticleList>>
-    get() = _homeArticles
+    val homeArticleList: MutableLiveData<ResultData<HomeArticleList>>
+        get() = _homeArticles
 
     private val pageChannel: Channel<Int> = Channel<Int>()
-    
+
     init {
-        Log.d(TAG, "init: ${homeArticleList.value?.data?.size}")
-       observePageChanged()
-       initPage()
+        observePageChanged()
+        initPage()
     }
 
     private fun initPage() {
@@ -39,11 +33,9 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
 
     @ExperimentalCoroutinesApi
     private fun observePageChanged() {
-        Log.d(TAG, "observePageChanged: ")
-        viewModelScope.launch{
+        viewModelScope.launch {
             pageChannel.receiveAsFlow()
-                .onEach {page->
-                    Log.d(TAG, "receivePage --> $page")
+                .onEach { page ->
                     fetchHomeArticles(page)
                 }
                 .launchIn(this)
@@ -62,7 +54,7 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
 
     fun loadMore() {
         viewModelScope.launch {
-            pageChannel.send((pageChannel.poll() ?: 0)+1)
+            pageChannel.send((pageChannel.poll() ?: 0) + 1)
         }
     }
 

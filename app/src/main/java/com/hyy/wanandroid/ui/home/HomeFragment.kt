@@ -11,9 +11,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.hyy.wanandroid.R
 import com.hyy.wanandroid.base.BaseFragment
 import com.hyy.wanandroid.data.ViewModelFactoryProvider
+import com.hyy.wanandroid.data.bean.Article
 import com.hyy.wanandroid.data.network.RequestStatus
 import com.hyy.wanandroid.databinding.FragmentHomeBinding
 
@@ -21,6 +23,10 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
     private val homeViewModel by viewModels<HomeViewModel> {
         ViewModelFactoryProvider.getHomeViewModelFactory()
+    }
+
+    private val adapter: HomeArticleListAdapter by lazy {
+        HomeArticleListAdapter()
     }
 
     override fun getViewBinding(
@@ -31,9 +37,22 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mBinding.rvHomeList.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = this@HomeFragment.adapter
+        }
         homeViewModel.homeArticleList.observe(viewLifecycleOwner, Observer {
             when(it.status) {
                 RequestStatus.SUCCESS -> {
+                    it.data?.apply {
+                        articleList.apply {
+//                            Log.d(TAG, "onViewCreated: articles size--> ${this?.size}" )
+                                this?.apply {
+                                    adapter.setNewInstance(toMutableList())
+                            }
+
+                        }
+                    }
                     Toast.makeText(requireContext(), "网络请求成功了", Toast.LENGTH_SHORT).show()
                 }
                 RequestStatus.ERROR -> {
@@ -44,30 +63,6 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
                 }
             }
         })
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG, "onResume: ")
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.d(TAG, "onStart: ")
-    }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.d(TAG, "onDestroyView: ")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d(TAG, "onStop: ")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "onDestroy: ")
     }
 
     companion object {
