@@ -7,7 +7,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class BaseModel<out T>(
     @Json(name = "data")
-    val data: T,
+    val data: T?,
     @Json(name = "errorCode")
     val errorCode: Int,
     @Json(name = "errorMsg")

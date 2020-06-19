@@ -80,6 +80,9 @@ dependencies {
     //baseRecyclerViewAdapter
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
 
+    implementation 'com.jaeger.statusbarutil:library:1.5.1'
+    //banner
+    implementation 'com.youth.banner:banner:2.0.11'
     //moshi
     implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")

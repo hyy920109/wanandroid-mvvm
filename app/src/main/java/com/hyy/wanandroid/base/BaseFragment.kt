@@ -27,6 +27,17 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     abstract fun getViewBinding(inflater: LayoutInflater,
                                 container: ViewGroup?): VB
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupViews()
+        setupListeners()
+        setupObservers()
+    }
+
+    protected abstract fun setupViews()
+    protected abstract fun setupListeners()
+    protected abstract fun setupObservers()
+
     @CallSuper
     override fun onDestroyView() {
         super.onDestroyView()

@@ -1,5 +1,6 @@
 package com.hyy.wanandroid
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -10,6 +11,7 @@ import com.hyy.wanandroid.databinding.ActivityMainBinding
 import com.hyy.wanandroid.ui.dashboard.DashboardFragment
 import com.hyy.wanandroid.ui.home.HomeFragment
 import com.hyy.wanandroid.ui.notifications.NotificationsFragment
+import com.jaeger.library.StatusBarUtil
 
 class MainActivity : AppCompatActivity() {
 
@@ -63,6 +65,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+//        StatusBarUtil.setColor(this, Color.TRANSPARENT)
 
         binding.navView.menu.forEach {
             val view = binding.navView.findViewById<View>(it.itemId)

@@ -1,22 +1,31 @@
 package com.hyy.wanandroid.ui.home
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.hyy.wanandroid.data.ResultData
 import com.hyy.wanandroid.data.bean.HomeArticleList
-import com.hyy.wanandroid.data.network.request
+import com.hyy.wanandroid.data.network.RequestStatus
+import com.hyy.wanandroid.data.network.resolveError
+import com.hyy.wanandroid.data.network.simpleRequest
 import com.hyy.wanandroid.data.repository.HomeRepository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.hyy.wanandroid.ext.addSource
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import java.io.IOException
 
 @ExperimentalCoroutinesApi
 class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
 
-    private val _homeArticles = MutableLiveData<ResultData<HomeArticleList>>()
+    private val _homeArticles = MediatorLiveData<ResultData<HomeArticleList>>()
 
-    val homeArticleList: MutableLiveData<ResultData<HomeArticleList>>
+    val homeArticleList: MediatorLiveData<ResultData<HomeArticleList>>
         get() = _homeArticles
+
+    private val _homeData = MediatorLiveData<ResultData<HomeData>>()
+
+    val homeData: MediatorLiveData<ResultData<HomeData>>
+        get() = _homeData
 
     private val pageChannel: Channel<Int> = Channel<Int>()
 
@@ -36,19 +45,38 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
         viewModelScope.launch {
             pageChannel.receiveAsFlow()
                 .onEach { page ->
-                    fetchHomeArticles(page)
+                    if (page == 0) {
+                        fetchHomeData(page)
+                    }
                 }
                 .launchIn(this)
         }
     }
 
-    private fun fetchHomeArticles(page: Int) {
+    private fun fetchHomeData(page: Int) {
         viewModelScope.launch {
-            request {
-                homeRepository.requestHomeArticles(page)
-            }.collect {
-                _homeArticles.postValue(it)
+
+//            val simpleRequest = simpleRequest {
+//                homeRepository.requestHomeArticles(page)
+//            }
+//            _homeArticles.addSource(simpleRequest)
+            val homeDataResource = liveData {
+                try {
+                    emit(ResultData.start())
+                    val banners = homeRepository.fetchHomeBanner()
+                    val articles = homeRepository.requestHomeArticles(page)
+                    if (banners.status == RequestStatus.EMPTY || articles.status == RequestStatus.EMPTY) {
+                        emit(ResultData.empty())
+                    } else {
+                        emit(ResultData.success(HomeData(banners.data!!, articles.data!!)))
+                    }
+                } catch (e: Throwable) {
+                    val error = resolveError(e)
+                    emit(ResultData.error(error.errorMsg, error.errorCode))
+                }
             }
+            _homeData.addSource(homeDataResource)
+
         }
     }
 

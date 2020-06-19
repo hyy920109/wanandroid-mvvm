@@ -1,25 +1,26 @@
 package com.hyy.wanandroid.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.hyy.wanandroid.R
 import com.hyy.wanandroid.base.BaseFragment
+import com.hyy.wanandroid.data.ResultData
 import com.hyy.wanandroid.data.ViewModelFactoryProvider
-import com.hyy.wanandroid.data.bean.Article
+import com.hyy.wanandroid.data.bean.Banner
+import com.hyy.wanandroid.data.bean.HomeArticleList
 import com.hyy.wanandroid.data.network.RequestStatus
 import com.hyy.wanandroid.databinding.FragmentHomeBinding
+import com.jaeger.library.StatusBarUtil
+import com.youth.banner.indicator.CircleIndicator
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
+
+class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     private val homeViewModel by viewModels<HomeViewModel> {
         ViewModelFactoryProvider.getHomeViewModelFactory()
@@ -37,32 +38,7 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mBinding.rvHomeList.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = this@HomeFragment.adapter
-        }
-        homeViewModel.homeArticleList.observe(viewLifecycleOwner, Observer {
-            when(it.status) {
-                RequestStatus.SUCCESS -> {
-                    it.data?.apply {
-                        articleList.apply {
-//                            Log.d(TAG, "onViewCreated: articles size--> ${this?.size}" )
-                                this?.apply {
-                                    adapter.setNewInstance(toMutableList())
-                            }
-
-                        }
-                    }
-                    Toast.makeText(requireContext(), "网络请求成功了", Toast.LENGTH_SHORT).show()
-                }
-                RequestStatus.ERROR -> {
-                    Toast.makeText(requireContext(), "网络请求失败了", Toast.LENGTH_SHORT).show()
-                }
-                RequestStatus.START -> {
-                    Toast.makeText(requireContext(), "正在请求数据", Toast.LENGTH_SHORT).show()
-                }
-            }
-        })
+//        StatusBarUtil.setTranslucentForImageViewInFragment(requireActivity(), mBinding.banner)
     }
 
     companion object {
@@ -71,5 +47,86 @@ class HomeFragment() : BaseFragment<FragmentHomeBinding>() {
         fun create() : HomeFragment{
             return HomeFragment()
         }
+    }
+
+    override fun setupViews() {
+        mBinding.rvHomeList.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = this@HomeFragment.adapter
+        }
+//        adapter.addLoadMoreModule()
+    }
+
+    override fun setupListeners() {
+    }
+
+    @ExperimentalCoroutinesApi
+    override fun setupObservers() {
+        homeViewModel.homeData.observe(viewLifecycleOwner, Observer {
+            setupHomeData(it)
+        })
+        homeViewModel.homeArticleList.observe(viewLifecycleOwner, Observer {
+            setupArticleList(it)
+        })
+    }
+
+    private fun setupHomeData(homeData: ResultData<HomeData>) {
+        homeData?.apply {
+            when(status) {
+                RequestStatus.SUCCESS -> {
+                    data?.apply {
+                        banners.apply {
+                            setupBannerView(this)
+                        }
+                        homeArticleList.articleList.map {
+                            HomeArticleListAdapter.ArticleItem(it)
+                        }.apply {
+                            adapter.addData(this)
+                        }
+                    }
+                    Toast.makeText(requireContext(), "网络请求成功了", Toast.LENGTH_SHORT).show()
+                }
+                RequestStatus.ERROR -> {
+                    Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
+                }
+                RequestStatus.START -> {
+                    Toast.makeText(requireContext(), "正在请求数据", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun setupBannerView(banners: List<Banner>) {
+        mBinding.banner.apply {
+            addBannerLifecycleObserver(this@HomeFragment)
+            adapter = BannerItemAdapter(banners)
+            indicator = CircleIndicator(context)
+            start()
+        }
+    }
+
+    private fun setupArticleList(resultData: ResultData<HomeArticleList>?) {
+       resultData?.apply {
+           when(status) {
+               RequestStatus.SUCCESS -> {
+                   data?.apply {
+                       this.articleList.map {
+                           HomeArticleListAdapter.ArticleItem(it)
+                       }.apply {
+                           adapter.addData(this)
+                       }
+                   }
+               }
+               RequestStatus.EMPTY -> {
+
+               }
+               RequestStatus.ERROR -> {
+                   Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
+               }
+               RequestStatus.START -> {
+                   Toast.makeText(requireContext(), "正在请求数据", Toast.LENGTH_SHORT).show()
+               }
+           }
+       }
     }
 }
