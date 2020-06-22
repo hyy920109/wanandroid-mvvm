@@ -2,17 +2,16 @@ package com.hyy.wanandroid.ui.home
 
 import android.util.Log
 import androidx.lifecycle.*
+import com.hyy.wanandroid.data.ExceptionWrapper
 import com.hyy.wanandroid.data.ResultData
+import com.hyy.wanandroid.data.bean.Banner
 import com.hyy.wanandroid.data.bean.HomeArticleList
-import com.hyy.wanandroid.data.network.RequestStatus
-import com.hyy.wanandroid.data.network.resolveError
-import com.hyy.wanandroid.data.network.simpleRequest
+import com.hyy.wanandroid.data.network.*
 import com.hyy.wanandroid.data.repository.HomeRepository
 import com.hyy.wanandroid.ext.addSource
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import java.io.IOException
 
 @ExperimentalCoroutinesApi
 class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
@@ -29,6 +28,8 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
 
     private val pageChannel: Channel<Int> = Channel<Int>()
 
+    private var _currPage = 0
+
     init {
         observePageChanged()
         initPage()
@@ -36,7 +37,7 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
 
     private fun initPage() {
         viewModelScope.launch {
-            pageChannel.send(0)
+            pageChannel.send(_currPage)
         }
     }
 
@@ -47,23 +48,32 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
                 .onEach { page ->
                     if (page == 0) {
                         fetchHomeData(page)
+                    }else {
+                        loadMoreArticle(page)
                     }
                 }
                 .launchIn(this)
         }
     }
 
+    private fun loadMoreArticle(page: Int) {
+        viewModelScope.launch {
+            val simpleRequest = simpleRequest {
+                homeRepository.requestHomeArticles(page)
+            }
+            _homeArticles.addSource(simpleRequest)
+        }
+    }
+
     private fun fetchHomeData(page: Int) {
         viewModelScope.launch {
 
-//            val simpleRequest = simpleRequest {
-//                homeRepository.requestHomeArticles(page)
-//            }
-//            _homeArticles.addSource(simpleRequest)
             val homeDataResource = liveData {
+
                 try {
                     emit(ResultData.start())
-                    val banners = homeRepository.fetchHomeBanner()
+                    //TODO  是否有优雅的方式 通过并发的模式同时请求两个接口 然后再做整合
+                    val banners =  homeRepository.fetchHomeBanner()
                     val articles = homeRepository.requestHomeArticles(page)
                     if (banners.status == RequestStatus.EMPTY || articles.status == RequestStatus.EMPTY) {
                         emit(ResultData.empty())
@@ -82,7 +92,7 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
 
     fun loadMore() {
         viewModelScope.launch {
-            pageChannel.send((pageChannel.poll() ?: 0) + 1)
+            pageChannel.send(++_currPage)
         }
     }
 

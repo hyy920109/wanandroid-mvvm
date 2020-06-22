@@ -1,17 +1,18 @@
 package com.hyy.wanandroid
 
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.View
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.hyy.wanandroid.databinding.ActivityMainBinding
 import com.hyy.wanandroid.ui.dashboard.DashboardFragment
 import com.hyy.wanandroid.ui.home.HomeFragment
 import com.hyy.wanandroid.ui.notifications.NotificationsFragment
-import com.jaeger.library.StatusBarUtil
 
 class MainActivity : AppCompatActivity() {
 
@@ -65,7 +66,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-//        StatusBarUtil.setColor(this, Color.TRANSPARENT)
 
         binding.navView.menu.forEach {
             val view = binding.navView.findViewById<View>(it.itemId)
@@ -79,4 +79,21 @@ class MainActivity : AppCompatActivity() {
         binding.navView.selectedItemId = R.id.navigation_home
     }
 
+
+    override fun onResume() {
+        super.onResume()
+        setupStatusBar()
+    }
+
+    private fun setupStatusBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            val visibility = window.decorView.systemUiVisibility
+            window.decorView.systemUiVisibility =
+                (visibility or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.statusBarColor = resources.getColor(R.color.colorStatusBar)
+        }
+    }
 }

@@ -57,6 +57,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     // jetpack
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
@@ -79,10 +80,13 @@ dependencies {
 
     //baseRecyclerViewAdapter
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
-
-    implementation 'com.jaeger.statusbarutil:library:1.5.1'
+    //smartRefreshLayout
+    implementation  'com.scwang.smart:refresh-layout-kernel:2.0.1'      //核心必须依赖
+    implementation  'com.scwang.smart:refresh-header-classics:2.0.1'    //经典刷新头
+//    implementation 'com.jaeger.statusbarutil:library:1.5.1'
     //banner
     implementation 'com.youth.banner:banner:2.0.11'
+    implementation 'com.github.czy1121:loadinglayout:1.0.1'
     //moshi
     implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")

@@ -1,8 +1,7 @@
 package com.hyy.wanandroid.ui.home
 
-import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
@@ -15,7 +14,6 @@ import com.hyy.wanandroid.data.bean.Banner
 import com.hyy.wanandroid.data.bean.HomeArticleList
 import com.hyy.wanandroid.data.network.RequestStatus
 import com.hyy.wanandroid.databinding.FragmentHomeBinding
-import com.jaeger.library.StatusBarUtil
 import com.youth.banner.indicator.CircleIndicator
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -35,12 +33,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         container: ViewGroup?
     ): FragmentHomeBinding = FragmentHomeBinding.inflate(inflater, container, false)
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-//        StatusBarUtil.setTranslucentForImageViewInFragment(requireActivity(), mBinding.banner)
-    }
-
     companion object {
         const val TAG = "HomeFragment"
 
@@ -54,7 +46,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@HomeFragment.adapter
         }
-//        adapter.addLoadMoreModule()
+
+        adapter.loadMoreModule.isEnableLoadMore =true
+        adapter.loadMoreModule.setOnLoadMoreListener {
+            Log.d(TAG, "setupViews: to load more")
+            homeViewModel.loadMore()
+        }
     }
 
     override fun setupListeners() {
@@ -63,34 +60,34 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     @ExperimentalCoroutinesApi
     override fun setupObservers() {
         homeViewModel.homeData.observe(viewLifecycleOwner, Observer {
+            Log.d(TAG, "setupObservers: homeData")
             setupHomeData(it)
         })
         homeViewModel.homeArticleList.observe(viewLifecycleOwner, Observer {
+            Log.d(TAG, "setupObservers: homeArticleList")
             setupArticleList(it)
         })
     }
 
     private fun setupHomeData(homeData: ResultData<HomeData>) {
-        homeData?.apply {
+        homeData.apply {
             when(status) {
                 RequestStatus.SUCCESS -> {
                     data?.apply {
                         banners.apply {
                             setupBannerView(this)
                         }
-                        homeArticleList.articleList.map {
-                            HomeArticleListAdapter.ArticleItem(it)
-                        }.apply {
-                            adapter.addData(this)
-                        }
+                        adapter.setList(homeArticleList.articleList)
                     }
-                    Toast.makeText(requireContext(), "网络请求成功了", Toast.LENGTH_SHORT).show()
+                    mBinding.statusLayout.showContent()
+                    adapter.loadMoreModule.loadMoreComplete()
                 }
                 RequestStatus.ERROR -> {
+                    mBinding.statusLayout.showError()
                     Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
                 }
                 RequestStatus.START -> {
-                    Toast.makeText(requireContext(), "正在请求数据", Toast.LENGTH_SHORT).show()
+                    mBinding.statusLayout.showLoading()
                 }
             }
         }
@@ -110,11 +107,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
            when(status) {
                RequestStatus.SUCCESS -> {
                    data?.apply {
-                       this.articleList.map {
-                           HomeArticleListAdapter.ArticleItem(it)
-                       }.apply {
-                           adapter.addData(this)
-                       }
+                       adapter.addData(articleList)
+                       adapter.loadMoreModule.loadMoreComplete()
                    }
                }
                RequestStatus.EMPTY -> {
@@ -124,7 +118,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                    Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
                }
                RequestStatus.START -> {
-                   Toast.makeText(requireContext(), "正在请求数据", Toast.LENGTH_SHORT).show()
+
                }
            }
        }
