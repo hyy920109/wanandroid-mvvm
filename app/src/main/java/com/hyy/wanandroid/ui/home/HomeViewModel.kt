@@ -12,6 +12,8 @@ import com.hyy.wanandroid.ext.addSource
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
+import okhttp3.internal.wait
+import kotlin.coroutines.CoroutineContext
 
 @ExperimentalCoroutinesApi
 class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
@@ -48,7 +50,7 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
                 .onEach { page ->
                     if (page == 0) {
                         fetchHomeData(page)
-                    }else {
+                    } else {
                         loadMoreArticle(page)
                     }
                 }
@@ -66,21 +68,24 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
     }
 
     private fun fetchHomeData(page: Int) {
-        viewModelScope.launch {
+
+       viewModelScope.launch {
 
             val homeDataResource = liveData {
 
                 try {
                     emit(ResultData.start())
-                    //TODO  是否有优雅的方式 通过并发的模式同时请求两个接口 然后再做整合
-                    val banners =  homeRepository.fetchHomeBanner()
-                    val articles = homeRepository.requestHomeArticles(page)
+                    //异步调用的话 需要用viewModelScope.async{}
+                    val bannersFuture =  viewModelScope.async { homeRepository.fetchHomeBanner() }
+                    val articlesFuture = viewModelScope.async { homeRepository.requestHomeArticles(page) }
+                    val banners = bannersFuture.await()
+                    val articles = articlesFuture.await()
                     if (banners.status == RequestStatus.EMPTY || articles.status == RequestStatus.EMPTY) {
                         emit(ResultData.empty())
                     } else {
                         emit(ResultData.success(HomeData(banners.data!!, articles.data!!)))
                     }
-                } catch (e: Throwable) {
+                } catch (e: Exception) {
                     val error = resolveError(e)
                     emit(ResultData.error(error.errorMsg, error.errorCode))
                 }
@@ -89,6 +94,23 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
 
         }
     }
+
+
+    fun <T> launch(block: suspend () -> T) {
+        viewModelScope.launch {
+            try {
+                block.invoke()
+            } catch (e: Exception) {
+                Log.d(TAG, "launch: error-> ${e.message}")
+            }
+        }
+    }
+
+
+    fun <T> async(api: suspend () -> T) =
+        viewModelScope.async {
+            api.invoke()
+        }
 
     fun loadMore() {
         viewModelScope.launch {

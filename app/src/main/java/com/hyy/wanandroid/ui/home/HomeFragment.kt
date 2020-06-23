@@ -60,7 +60,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     @ExperimentalCoroutinesApi
     override fun setupObservers() {
         homeViewModel.homeData.observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, "setupObservers: homeData")
+            Log.d(TAG, "setupObservers: homeData $it")
             setupHomeData(it)
         })
         homeViewModel.homeArticleList.observe(viewLifecycleOwner, Observer {
@@ -83,7 +83,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                     adapter.loadMoreModule.loadMoreComplete()
                 }
                 RequestStatus.ERROR -> {
-                    mBinding.statusLayout.showError()
+                    Log.d(TAG, "setupHomeData: error")
+//                    mBinding.statusLayout.showError()
                     Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
                 }
                 RequestStatus.START -> {
@@ -112,9 +113,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                    }
                }
                RequestStatus.EMPTY -> {
-
+                        adapter.loadMoreModule.loadMoreEnd(true)
                }
                RequestStatus.ERROR -> {
+                   adapter.loadMoreModule.loadMoreFail()
                    Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
                }
                RequestStatus.START -> {

@@ -9,6 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 const val BASE_URL = "https://www.wanandroid.com/"
+
 class NetworkClient<out T>(val baseUrl: String, clazz: Class<T>) {
 
     private val httpLogger = object : HttpLoggingInterceptor.Logger {
@@ -17,10 +18,14 @@ class NetworkClient<out T>(val baseUrl: String, clazz: Class<T>) {
         }
 
     }
+
     private val serializer: Moshi by lazy { Moshi.Builder().build() }
     private val httpClient by lazy {
         OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor(logger = httpLogger).setLevel(if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE))
+            .addInterceptor(HttpLoggingInterceptor(logger = httpLogger).apply {
+                level =
+                    if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+            })
             .build()
     }
 
@@ -34,5 +39,5 @@ class NetworkClient<out T>(val baseUrl: String, clazz: Class<T>) {
 
     private val api by lazy { retrofit.create(clazz) }
 
-    fun api() : T = api
+    fun api(): T = api
 }

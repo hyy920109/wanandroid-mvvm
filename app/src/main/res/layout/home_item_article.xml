@@ -6,49 +6,82 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="10dp"
     android:layout_marginTop="10dp"
-    app:cardCornerRadius="4dp"
-    app:cardElevation="2dp"
     android:foreground="?selectableItemBackground"
-    app:cardBackgroundColor="?colorSurface">
+    app:cardBackgroundColor="?colorSurface"
+    app:cardCornerRadius="4dp"
+    app:cardElevation="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:padding="@dimen/margin_small">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/article_name"
-            android:layout_width="0dp"
+            android:id="@+id/author"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="2"
-            android:textColor="?colorOnSurface"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:drawableStart="@drawable/ic_person"
+            android:gravity="center_vertical"
+            android:textColor="@color/colorTextLightGray"
+            android:textSize="12sp"
+            app:drawableTint="@color/colorTextLightGray"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Android Jetpack架构开发组件化应用实践" />
+            tools:text="分享自:贺洋洋" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/chapter_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="?colorOnSecondary"
+            android:textColor="@color/colorTextLightGray"
             android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/author"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/author"
+            tools:text="扔无线/Jetpack" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/article_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textColor="?colorOnSurface"
+            android:textSize="16sp"
+            app:fontFamily="sans-serif-medium"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/article_name"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="扔无线" />
+            app:layout_constraintTop_toBottomOf="@+id/author"
+            tools:text="Android Jetpack架构开发组件化应用实践" />
+
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/article_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:drawableStart="@drawable/ic_article_time"
+            android:drawablePadding="3dp"
+            android:gravity="center_vertical"
+            android:textColor="@color/colorTextLightGray"
             android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/chapter_name"
+            app:drawableTint="@color/colorTextLightGray"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btn_favorite"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_favorite"
             tools:text="刚刚" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_favorite"
+            android:layout_marginTop="6dp"
+            android:tint="@color/colorTextLightGray"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/article_name" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

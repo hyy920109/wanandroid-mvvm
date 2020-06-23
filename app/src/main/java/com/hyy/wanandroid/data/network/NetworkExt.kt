@@ -2,6 +2,7 @@ package com.hyy.wanandroid.data.network
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.hyy.wanandroid.data.*
 import com.hyy.wanandroid.data.bean.Banner
