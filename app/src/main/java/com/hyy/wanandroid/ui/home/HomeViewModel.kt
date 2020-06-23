@@ -69,15 +69,16 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
 
     private fun fetchHomeData(page: Int) {
 
-       viewModelScope.launch {
+        viewModelScope.launch {
 
             val homeDataResource = liveData {
 
                 try {
                     emit(ResultData.start())
                     //异步调用的话 需要用viewModelScope.async{}
-                    val bannersFuture =  viewModelScope.async { homeRepository.fetchHomeBanner() }
-                    val articlesFuture = viewModelScope.async { homeRepository.requestHomeArticles(page) }
+                    val bannersFuture = viewModelScope.async { homeRepository.fetchHomeBanner() }
+                    val articlesFuture =
+                        viewModelScope.async { homeRepository.requestHomeArticles(page) }
                     val banners = bannersFuture.await()
                     val articles = articlesFuture.await()
                     if (banners.status == RequestStatus.EMPTY || articles.status == RequestStatus.EMPTY) {
@@ -94,23 +95,6 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
 
         }
     }
-
-
-    fun <T> launch(block: suspend () -> T) {
-        viewModelScope.launch {
-            try {
-                block.invoke()
-            } catch (e: Exception) {
-                Log.d(TAG, "launch: error-> ${e.message}")
-            }
-        }
-    }
-
-
-    fun <T> async(api: suspend () -> T) =
-        viewModelScope.async {
-            api.invoke()
-        }
 
     fun loadMore() {
         viewModelScope.launch {
