@@ -10,10 +10,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.hyy.wanandroid.base.BaseFragment
 import com.hyy.wanandroid.data.ResultData
 import com.hyy.wanandroid.data.ViewModelFactoryProvider
+import com.hyy.wanandroid.data.bean.Article
 import com.hyy.wanandroid.data.bean.Banner
 import com.hyy.wanandroid.data.bean.HomeArticleList
 import com.hyy.wanandroid.data.network.RequestStatus
 import com.hyy.wanandroid.databinding.FragmentHomeBinding
+import com.hyy.wanandroid.ui.web.ArticleWebActivity
 import com.youth.banner.indicator.CircleIndicator
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -49,22 +51,23 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
         adapter.loadMoreModule.isEnableLoadMore =true
         adapter.loadMoreModule.setOnLoadMoreListener {
-            Log.d(TAG, "setupViews: to load more")
             homeViewModel.loadMore()
         }
     }
 
     override fun setupListeners() {
+        adapter.setOnItemClickListener { adapter, view, position ->
+            val item = adapter.getItem(position) as Article
+            ArticleWebActivity.start(requireContext(), item.title, item.link)
+        }
     }
 
     @ExperimentalCoroutinesApi
     override fun setupObservers() {
         homeViewModel.homeData.observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, "setupObservers: homeData $it")
             setupHomeData(it)
         })
         homeViewModel.homeArticleList.observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, "setupObservers: homeArticleList")
             setupArticleList(it)
         })
     }
@@ -84,7 +87,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 }
                 RequestStatus.ERROR -> {
                     Log.d(TAG, "setupHomeData: error")
-//                    mBinding.statusLayout.showError()
+                    mBinding.statusLayout.showError()
                     Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
                 }
                 RequestStatus.START -> {

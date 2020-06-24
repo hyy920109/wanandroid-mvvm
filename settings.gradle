@@ -1,2 +1,2 @@
-
+include ':libraries:res'
 include ':app'

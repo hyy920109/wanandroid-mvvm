@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="textButtonStyle" format="reference"/>
+    <attr name="divideDark" format="reference|color"/>
+    <attr name="divideLight" format="reference|color"/>
+</resources>

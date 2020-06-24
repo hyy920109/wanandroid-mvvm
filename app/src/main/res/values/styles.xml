@@ -1,16 +1,59 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!--appCompat Support-->
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorPrimaryDark</item>
 
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-<!--        <item name="android:statusBarColor">@android:color/white</item>-->
-<!--        <item name="android:windowTranslucentStatus">true</item>-->
+        <!--控制状态栏字体是黑色还是白色-->
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+
+        <item name="actionBarSize">48dp</item>
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
+        <!--text color 颜色-->
+        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="android:textColorPrimary">@color/colorTextPrimary</item>
+        <item name="android:windowBackground">@color/colorWindowBackground</item>
+        <item name="android:fontFamily">@font/work_sans_regular</item>
+
+        <!--Material Support-->
+        <!--主要颜色上面的颜色  这个颜色通常使用在背景色是主要颜色的view上面-->
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <!--主要颜色的变体 通常是colorPrimary的较浅或较深的颜色 -->
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+        <!--次要颜色-->
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <!--次要颜色变体 通常是colorSecondary的较浅或者较深的颜色-->
+        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
+        <!--次要颜色上面的颜色-->
+        <item name="colorOnSecondary">@color/colorOnSecondary</item>
+        <!--错误颜色-->
+        <item name="colorError">@color/colorError</item>
+        <item name="colorOnError">@color/colorOnError</item>
+        <!--表层颜色-->
+        <item name="colorSurface">@color/colorSurface</item>
+        <item name="colorOnSurface">@color/colorOnSurface</item>
+
+        <!--        <item name="colorControlNormal">@color/colorOnPrimary</item>-->
+        <!--Custom Attributes-->
+        <item name="divideDark">@color/material_textBlack_dividers</item>
+        <item name="divideLight">@color/material_textWhite_dividers</item>
     </style>
 
+    <style name="BottomNavigationActiveTextAppearance">
+        <item name="fontFamily">@font/work_sans_medium</item>
+    </style>
+    <style name="BottomNavigationInActiveText">
+        <item name="fontFamily">@font/work_sans_regular</item>
+    </style>
+
+    <style name="ToolbarTitleTextAppearance">
+        <item name="fontFamily">@font/work_sans_medium</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">17sp</item>
+    </style>
 </resources>

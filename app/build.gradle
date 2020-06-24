@@ -86,9 +86,14 @@ dependencies {
 //    implementation 'com.jaeger.statusbarutil:library:1.5.1'
     //banner
     implementation 'com.youth.banner:banner:2.0.11'
-    implementation 'com.github.czy1121:loadinglayout:1.0.1'
+    implementation 'com.classic.common:multiple-status-view:1.7'
     //moshi
     implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")
 
+    implementation project(':libraries:res')
+
+    implementation 'com.just.agentweb:agentweb:4.1.3'
+
+    implementation('com.github.hackware1993:MagicIndicator:1.5.0')
 }

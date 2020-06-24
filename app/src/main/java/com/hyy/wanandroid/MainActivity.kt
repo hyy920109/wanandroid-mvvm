@@ -1,6 +1,5 @@
 package com.hyy.wanandroid
 
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -12,6 +11,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.hyy.wanandroid.databinding.ActivityMainBinding
 import com.hyy.wanandroid.ui.dashboard.DashboardFragment
 import com.hyy.wanandroid.ui.home.HomeFragment
+import com.hyy.wanandroid.ui.mine.MineFragment
 import com.hyy.wanandroid.ui.notifications.NotificationsFragment
 
 class MainActivity : AppCompatActivity() {
@@ -28,15 +28,18 @@ class MainActivity : AppCompatActivity() {
         NotificationsFragment.create()
     }
 
+    private val mineFragment: MineFragment by lazy {
+        MineFragment.create()
+    }
+
     private val fragmentMap: Map<Int, Fragment> by lazy {
         hashMapOf(
             R.id.navigation_home to homeFragment,
             R.id.navigation_dashboard to dashboardFragment,
-            R.id.navigation_notifications to notificationsFragment
+            R.id.navigation_notifications to notificationsFragment,
+            R.id.nav_account to mineFragment
         )
     }
-
-    private var currSelectId = -1
 
     //不用原有的navigation 的原因是 navigation 里面默认用replace 来管理fragment
     private lateinit var binding: ActivityMainBinding
@@ -47,18 +50,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun changeFragmentById(itemId: Int) {
-        if (itemId == currSelectId) return
-        val lastFragment = fragmentMap[currSelectId]
-        val fragment = fragmentMap[itemId]
-        currSelectId = itemId
-        fragment?.apply {
-            val transaction = supportFragmentManager.beginTransaction()
-            if (!isAdded) transaction.add(R.id.fragment_container, fragment, javaClass.simpleName)
-            transaction.show(fragment)
-            lastFragment?.let {
-                transaction.hide(it)
+        val currFragment = supportFragmentManager.fragments.find { it.isVisible && it in fragmentMap.values }
+        val fragment = fragmentMap.entries.find { it.key == itemId }?.value
+        supportFragmentManager.beginTransaction().apply {
+            currFragment?.let {
+                if (it.isVisible) hide(it)
             }
-            transaction.commit()
+            fragment?.let {
+                if (it.isAdded) show(it) else add(R.id.fragment_container, it)
+            }
+            commit()
         }
     }
 
@@ -76,7 +77,9 @@ class MainActivity : AppCompatActivity() {
         }
         binding.navView.setOnNavigationItemSelectedListener(onNavListener)
 
-        binding.navView.selectedItemId = R.id.navigation_home
+        if (savedInstanceState == null) {
+            binding.navView.selectedItemId = R.id.navigation_home
+        }
     }
 
 

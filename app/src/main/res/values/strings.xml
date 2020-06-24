@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">WanAndroid</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_dashboard">Discover</string>
+    <string name="title_notifications">Nav</string>
+    <string name="title_account_center">Mine</string>
+    <string name="status_error">Network Error, Please check the Wifi Connection!</string>
 </resources>
