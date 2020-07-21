@@ -1,22 +1,15 @@
 package com.hyy.wanandroid.ui.mine
 
-import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
-import com.hyy.wanandroid.R
 import com.hyy.wanandroid.base.BaseFragment
 import com.hyy.wanandroid.databinding.FragmentMineBinding
 
 class MineFragment : BaseFragment<FragmentMineBinding>() {
 
-    private val dashboardViewModel: MineViewModel by lazy {
+    private val viewModel: MineViewModel by lazy {
         ViewModelProvider(
             this,
             ViewModelProvider.NewInstanceFactory()

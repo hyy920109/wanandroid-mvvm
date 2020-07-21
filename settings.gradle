@@ -1,2 +1,6 @@
+include ':libraries:data-coroutine'
+include ':libraries:data-rxjava'
+include ':libraries:data-api-rxjava'
+include ':libraries:data-api-coroutine'
 include ':libraries:res'
 include ':app'

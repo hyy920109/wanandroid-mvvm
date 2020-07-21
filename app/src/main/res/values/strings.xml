@@ -5,4 +5,11 @@
     <string name="title_notifications">Nav</string>
     <string name="title_account_center">Mine</string>
     <string name="status_error">Network Error, Please check the Wifi Connection!</string>
+
+    <!--mine-->
+    <string name="mine_login_or_register">登录/注册</string>
+    <string name="mine_share">我的分享</string>
+    <string name="mine_favorite">我的收藏</string>
+    <string name="mine_history">浏览历史</string>
+
 </resources>

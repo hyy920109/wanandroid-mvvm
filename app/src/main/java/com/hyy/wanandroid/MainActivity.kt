@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        setupStatusBar()
+//        setupStatusBar()
     }
 
     private fun setupStatusBar() {

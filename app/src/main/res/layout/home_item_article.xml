@@ -6,8 +6,6 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="10dp"
     android:layout_marginTop="10dp"
-    app:rippleColor="@color/colorRipple"
-    app:cardBackgroundColor="?colorSurface"
     app:cardCornerRadius="4dp"
     app:cardElevation="2dp">
 

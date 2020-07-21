@@ -42,11 +42,16 @@
         <!--Custom Attributes-->
         <item name="divideDark">@color/material_textBlack_dividers</item>
         <item name="divideLight">@color/material_textWhite_dividers</item>
+        <item name="materialCardViewStyle">@style/GlobalCardStyle</item>
     </style>
 
+    <style name="GlobalCardStyle">
+        <item name="cardBackgroundColor">@color/colorSurfaceLighter</item>
+    </style>
     <style name="BottomNavigationActiveTextAppearance">
         <item name="fontFamily">@font/work_sans_medium</item>
     </style>
+
     <style name="BottomNavigationInActiveText">
         <item name="fontFamily">@font/work_sans_regular</item>
     </style>

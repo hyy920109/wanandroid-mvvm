@@ -16,7 +16,7 @@ data class ResultData<out T>(
 
         fun <T> empty() : ResultData<T> = ResultData(null, RequestStatus.EMPTY)
 
-        fun <T> complete(data: T?) : ResultData<T> = ResultData(data, RequestStatus.COMPLETE)
+        fun <T> complete() : ResultData<T> = ResultData(null, RequestStatus.COMPLETE)
 
         fun <T> error(errorMsg: String, errorCode: Int): ResultData<T> = ResultData(null, RequestStatus.ERROR, errorMsg, errorCode)
 
