@@ -33,4 +33,12 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    //moshi
+    implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
+    //retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation "com.squareup.retrofit2:converter-moshi:2.7.1"
+    //logging interceptor
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.2'
+    implementation project(':libraries:data-api-coroutine')
 }

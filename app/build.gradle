@@ -99,7 +99,7 @@ dependencies {
 
     implementation project(':libraries:res')
     implementation project(':libraries:data-api-coroutine')
-
+    jetpackImplementation project(':libraries:data-coroutine')
     implementation 'com.just.agentweb:agentweb:4.1.3'
 
     implementation('com.github.hackware1993:MagicIndicator:1.5.0')
