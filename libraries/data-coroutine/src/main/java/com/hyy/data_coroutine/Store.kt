@@ -21,7 +21,7 @@ class Store private constructor(context: Context){
         @Volatile
         private var instance: Store? = null
         fun getInstance(context: Context) : Store = instance ?: synchronized(this) {
-            instance ?: Store(context)
+            instance ?: Store(context).also { instance = it }
         }
     }
 }

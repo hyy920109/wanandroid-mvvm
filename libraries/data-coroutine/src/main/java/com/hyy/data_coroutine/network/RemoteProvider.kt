@@ -17,8 +17,8 @@ class RemoteProvider(private val networkClient: NetworkClient<WanAndroidApi>) {
 
 
     suspend fun fetchHomeBanner():List<Banner> {
-        val data = networkClient.api().getHomeBanner().transform()
         Log.d(TAG, "fetchHomeBanner: ")
+        val data = networkClient.api().getHomeBanner().transform()
         return data.map { it.toDomain() }
     }
 

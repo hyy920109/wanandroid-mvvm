@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.hyy.wanandroid.data.bean.Banner
+import com.hyy.data_api_coroutine.model.Banner
 import com.hyy.wanandroid.databinding.HomeBannerSingleItemBinding
 import com.youth.banner.adapter.BannerAdapter
 

@@ -7,14 +7,14 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.hyy.data_api_coroutine.model.Article
+import com.hyy.data_api_coroutine.model.Banner
+import com.hyy.data_api_coroutine.model.HomeArticleList
+import com.hyy.jetpack.provider.ViewModelFactoryProvider
 import com.hyy.jetpack.ui.web.ArticleWebActivity
 import com.hyy.wanandroid.base.BaseFragment
-import com.hyy.wanandroid.data.ResultData
-import com.hyy.wanandroid.data.ViewModelFactoryProvider
-import com.hyy.wanandroid.data.bean.Article
-import com.hyy.wanandroid.data.bean.Banner
-import com.hyy.wanandroid.data.bean.HomeArticleList
-import com.hyy.wanandroid.data.network.RequestStatus
+import com.hyy.jetpack.data_base.ResultData
+import com.hyy.jetpack.data_base.RequestStatus
 import com.hyy.wanandroid.databinding.FragmentHomeBinding
 import com.youth.banner.indicator.CircleIndicator
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,7 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     private val homeViewModel by viewModels<HomeViewModel> {
-        HomeViewModelFactory()
+        ViewModelFactoryProvider.getHomeViewModelFactory()
     }
 
     private val adapter: HomeArticleListAdapter by lazy {

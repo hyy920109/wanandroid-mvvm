@@ -2,20 +2,20 @@ package com.hyy.jetpack.ui.home
 
 import android.util.Log
 import androidx.lifecycle.*
-import com.hyy.wanandroid.data.ExceptionWrapper
-import com.hyy.wanandroid.data.ResultData
-import com.hyy.wanandroid.data.bean.Banner
-import com.hyy.wanandroid.data.bean.HomeArticleList
-import com.hyy.wanandroid.data.network.*
-import com.hyy.wanandroid.data.repository.HomeRepository
-import com.hyy.wanandroid.ext.addSource
-import kotlinx.coroutines.*
+import com.hyy.data_api_coroutine.model.HomeArticleList
+import com.hyy.data_api_coroutine.repository.HomeRepository
+import com.hyy.jetpack.ext.addSource
+import com.hyy.jetpack.ext.simpleRequest
+import com.hyy.jetpack.data_base.ResultData
+import com.hyy.jetpack.ext.resolveError
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
-import okhttp3.internal.wait
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 
-@ExperimentalCoroutinesApi
 class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
 
     private val _homeArticles = MediatorLiveData<ResultData<HomeArticleList>>()
@@ -81,13 +81,14 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
                         viewModelScope.async { homeRepository.requestHomeArticles(page) }
                     val banners = bannersFuture.await()
                     val articles = articlesFuture.await()
-                    if (banners.status == RequestStatus.EMPTY || articles.status == RequestStatus.EMPTY) {
+                    if (articles.articleList.isEmpty() || banners.isEmpty()) {
                         emit(ResultData.empty())
                     } else {
-                        emit(ResultData.success(HomeData(banners.data!!, articles.data!!)))
+                        emit(ResultData.success(HomeData(banners, articles)))
                     }
                 } catch (e: Exception) {
                     val error = resolveError(e)
+                    Log.d(TAG, "fetchHomeData: error ${error.errorMsg}")
                     emit(ResultData.error(error.errorMsg, error.errorCode))
                 }
             }

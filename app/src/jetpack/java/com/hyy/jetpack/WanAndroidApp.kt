@@ -1,7 +1,7 @@
 package com.hyy.jetpack
 
 import android.app.Application
-import com.hyy.wanandroid.data.RepositoryProvider
+import com.hyy.jetpack.provider.RepositoryProvider
 
 class WanAndroidApp : Application() {
 

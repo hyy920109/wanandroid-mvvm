@@ -1,7 +1,7 @@
 package com.hyy.data_coroutine.ext
 
 import com.hyy.data_coroutine.RESPONSE_CODE_SUCCESS
-import com.hyy.data_coroutine.exception.ExceptionWrapper
+import com.hyy.data_api_coroutine.exception.ExceptionWrapper
 import com.hyy.data_coroutine.network.model.BaseModel
 
 

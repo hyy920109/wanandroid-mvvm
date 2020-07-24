@@ -55,7 +55,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.3.0'
+    implementation 'androidx.core:core-ktx:1.3.1'
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.navigation:navigation-fragment:2.3.0'
@@ -73,11 +73,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     implementation "androidx.activity:activity-ktx:1.1.0"
-    //retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation "com.squareup.retrofit2:converter-moshi:2.7.1"
-    //logging interceptor
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.2'
     //material
     implementation "com.google.android.material:material:1.3.0-alpha01"
     // Glide
@@ -93,13 +88,11 @@ dependencies {
     //banner
     implementation 'com.youth.banner:banner:2.0.11'
     implementation 'com.classic.common:multiple-status-view:1.7'
-    //moshi
-    implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")
 
     implementation project(':libraries:res')
     implementation project(':libraries:data-api-coroutine')
     jetpackImplementation project(':libraries:data-coroutine')
+    rxjavaImplementation project(':libraries:data-rxjava')
     implementation 'com.just.agentweb:agentweb:4.1.3'
 
     implementation('com.github.hackware1993:MagicIndicator:1.5.0')

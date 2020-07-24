@@ -3,8 +3,8 @@ package com.hyy.jetpack.ui.home
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.module.LoadMoreModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.hyy.data_api_coroutine.model.Article
 import com.hyy.wanandroid.R
-import com.hyy.wanandroid.data.bean.Article
 
 class HomeArticleListAdapter :
     BaseQuickAdapter<Article, BaseViewHolder>(R.layout.home_item_article), LoadMoreModule {

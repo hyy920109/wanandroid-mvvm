@@ -1,0 +1,9 @@
+ext {
+    //统一配置dependence sample
+    networks = [
+            'com.squareup.retrofit2:retrofit:2.9.0',
+            'com.squareup.retrofit2:converter-moshi:2.7.1',
+            'com.squareup.okhttp3:logging-interceptor:4.2.2',
+            'com.squareup.moshi:moshi-kotlin:1.9.2'
+    ]
+}
