@@ -36,7 +36,7 @@ dependencies {
 
     implementation networks
     //moshi 必须添加下面的kapt
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")
-
+    kapt('com.squareup.moshi:moshi-kotlin-codegen:1.9.2')
+    kapt('androidx.room:room-compiler:2.2.5')
     api project(':libraries:data-api-coroutine')
 }

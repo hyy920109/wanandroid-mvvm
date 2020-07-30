@@ -3,7 +3,7 @@ package com.hyy.rxjava
 import android.app.Application
 import com.hyy.rxjava.provider.RepositoryProvider
 import com.hyy.wanandroid.BuildConfig
-import io.reactivex.rxjava3.plugins.RxJavaPlugins
+import io.reactivex.plugins.RxJavaPlugins
 
 class WanAndroidApp : Application() {
 
@@ -14,6 +14,6 @@ class WanAndroidApp : Application() {
                 it.printStackTrace()
             }
         }
-        RepositoryProvider.inject(context = this)
+        RepositoryProvider.inject(context = applicationContext)
     }
 }

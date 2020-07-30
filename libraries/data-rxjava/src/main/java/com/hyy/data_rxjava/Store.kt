@@ -1,6 +1,8 @@
 package com.hyy.data_rxjava
 
 import android.content.Context
+import com.hyy.data_rxjava.database.DBClient
+import com.hyy.data_rxjava.database.LocalProvider
 import com.hyy.data_rxjava.network.NetworkClient
 import com.hyy.data_rxjava.network.RemoteProvider
 import com.hyy.data_rxjava.network.WanAndroidApi
@@ -11,7 +13,13 @@ class Store private constructor(context: Context){
         RemoteProvider(NetworkClient(BASE_URL, WanAndroidApi::class.java))
     }
 
+    private val localProvider: LocalProvider by lazy {
+        LocalProvider(DBClient(context))
+    }
+
     fun remoteProvider() = remoteProvider
+
+    fun localProvider() = localProvider
 
     companion object {
         @Volatile

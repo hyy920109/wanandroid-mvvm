@@ -1,35 +1,65 @@
 package com.hyy.rxjava.ui.home
 
+import android.util.Log
 import androidx.lifecycle.*
+import com.hyy.data_api_rxjava.model.Article
 import com.hyy.data_api_rxjava.model.Banner
 import com.hyy.data_api_rxjava.model.HomeArticleList
 import com.hyy.data_api_rxjava.repository.HomeRepository
 import com.hyy.rxjava.base.BaseViewModel
 import com.hyy.rxjava.data_base.ResultData
 import com.hyy.rxjava.ext.resolve
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.functions.BiFunction
-import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 
 class HomeViewModel(private val homeRepository: HomeRepository) : BaseViewModel() {
 
     private val _homeData = BehaviorSubject.create<ResultData<HomeData>>()
     private val _moreArticles = BehaviorSubject.create<ResultData<HomeArticleList>>()
+    private val _favoriteArticleIds = PublishSubject.create<MutableSet<Int>>()
 
     val homeData: Observable<ResultData<HomeData>>
         get() = _homeData.hide()
 
     val moreArticles: Observable<ResultData<HomeArticleList>>
         get() = _moreArticles.hide()
+
+    val favoriteArticles: Observable<MutableSet<Int>>
+        get() = _favoriteArticleIds.hide()
+
     private var _currPage = 0
     private var _pageCount = 0
 
     init {
         fetchHomeData(_currPage)
+        observeFavoriteArticles()
     }
 
-    private fun loadMoreArticle(page: Int) {
+    private fun observeFavoriteArticles() {
+        addDisposable {
+            homeRepository.getFavoriteArticles()
+                .subscribeOn(Schedulers.io())
+                .doOnNext {
+                    _favoriteArticleIds.onNext(it.map { article -> article.id }.toMutableSet())
+                }
+                .subscribe()
+        }
+    }
+
+    fun addArticleToFavorite(article: Article) {
+        addDisposable {
+            Completable.fromAction {
+                homeRepository.addFavorite(article)
+            }.subscribeOn(Schedulers.io())
+                .doOnComplete { Log.d(TAG, "addArticleToFavorite: onComplete") }
+                .doOnError { Log.d(TAG, "addArticleToFavorite: onError${it.message}") }
+                .subscribe()
+        }
     }
 
     private fun fetchHomeData(page: Int) {
@@ -69,11 +99,18 @@ class HomeViewModel(private val homeRepository: HomeRepository) : BaseViewModel(
                 .doOnSuccess {
                     if (it.articleList.isEmpty()) {
                         _moreArticles.onNext(ResultData.empty())
-                    }else {
+                    } else {
                         _moreArticles.onNext(ResultData.success(it))
                     }
                 }
-                .doOnError { _moreArticles.onNext(ResultData.error(it.resolve().errorMsg, it.resolve().errorCode)) }
+                .doOnError {
+                    _moreArticles.onNext(
+                        ResultData.error(
+                            it.resolve().errorMsg,
+                            it.resolve().errorCode
+                        )
+                    )
+                }
                 .subscribe()
         }
     }

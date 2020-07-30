@@ -35,9 +35,11 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation networks
+    implementation room
     //moshi 必须添加下面的kapt
     kapt('com.squareup.moshi:moshi-kotlin-codegen:1.9.2')
+    //room compiler
+    kapt('androidx.room:room-compiler:2.2.5')
     api project(path: ':libraries:data-api-rxjava')
-    api 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
 
 }

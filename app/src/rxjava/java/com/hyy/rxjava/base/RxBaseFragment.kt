@@ -2,8 +2,8 @@ package com.hyy.rxjava.base
 
 import androidx.viewbinding.ViewBinding
 import com.hyy.wanandroid.base.BaseFragment
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 
 abstract class RxBaseFragment<VB: ViewBinding> : BaseFragment<VB>() {
 

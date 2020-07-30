@@ -14,9 +14,10 @@ import com.hyy.rxjava.data_base.RequestStatus
 import com.hyy.rxjava.data_base.ResultData
 import com.hyy.rxjava.provider.ViewModelFactoryProvider
 import com.hyy.rxjava.ui.web.ArticleWebActivity
+import com.hyy.wanandroid.R
 import com.hyy.wanandroid.databinding.FragmentHomeBinding
 import com.youth.banner.indicator.CircleIndicator
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 
 class HomeFragment : RxBaseFragment<FragmentHomeBinding>() {
@@ -37,7 +38,7 @@ class HomeFragment : RxBaseFragment<FragmentHomeBinding>() {
     companion object {
         const val TAG = "HomeFragment"
 
-        fun create() : HomeFragment{
+        fun create(): HomeFragment {
             return HomeFragment()
         }
     }
@@ -48,13 +49,18 @@ class HomeFragment : RxBaseFragment<FragmentHomeBinding>() {
             adapter = this@HomeFragment.adapter
         }
 
-        adapter.loadMoreModule.isEnableLoadMore =true
+        adapter.loadMoreModule.isEnableLoadMore = true
         adapter.loadMoreModule.setOnLoadMoreListener {
             homeViewModel.loadMore()
         }
     }
 
     override fun setupListeners() {
+        adapter.addChildClickViewIds(R.id.btn_favorite)
+        adapter.setOnItemChildClickListener { adapter, view, position ->
+            homeViewModel.addArticleToFavorite(adapter.getItem(position) as Article)
+        }
+
         adapter.setOnItemClickListener { adapter, view, position ->
             val item = adapter.getItem(position) as Article
             ArticleWebActivity.start(requireContext(), item.title, item.link)
@@ -75,11 +81,19 @@ class HomeFragment : RxBaseFragment<FragmentHomeBinding>() {
                 .doOnNext(::setupMoreArticles)
                 .subscribe()
         }
+
+        addDisposable {
+            homeViewModel.favoriteArticles
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext {
+                    adapter.updateFavoriteArticles(it) }
+                .subscribe()
+        }
     }
 
     private fun setupHomeData(homeData: ResultData<HomeData>) {
         homeData.apply {
-            when(status) {
+            when (status) {
                 RequestStatus.SUCCESS -> {
                     data?.apply {
                         banners.apply {
@@ -112,25 +126,25 @@ class HomeFragment : RxBaseFragment<FragmentHomeBinding>() {
     }
 
     private fun setupMoreArticles(resultData: ResultData<HomeArticleList>) {
-       resultData.apply {
-           when(status) {
-               RequestStatus.SUCCESS -> {
-                   data?.apply {
-                       adapter.addData(articleList)
-                       adapter.loadMoreModule.loadMoreComplete()
-                   }
-               }
-               RequestStatus.EMPTY -> {
-                        adapter.loadMoreModule.loadMoreEnd(true)
-               }
-               RequestStatus.ERROR -> {
-                   adapter.loadMoreModule.loadMoreFail()
-                   Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
-               }
-               RequestStatus.START -> {
+        resultData.apply {
+            when (status) {
+                RequestStatus.SUCCESS -> {
+                    data?.apply {
+                        adapter.addData(articleList)
+                        adapter.loadMoreModule.loadMoreComplete()
+                    }
+                }
+                RequestStatus.EMPTY -> {
+                    adapter.loadMoreModule.loadMoreEnd(true)
+                }
+                RequestStatus.ERROR -> {
+                    adapter.loadMoreModule.loadMoreFail()
+                    Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
+                }
+                RequestStatus.START -> {
 
-               }
-           }
-       }
+                }
+            }
+        }
     }
 }

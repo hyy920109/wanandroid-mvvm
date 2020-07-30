@@ -7,7 +7,9 @@ import com.hyy.data_rxjava.network.model.ArticleModel
 import com.hyy.data_rxjava.network.model.BannerModel
 import com.hyy.data_rxjava.network.model.HomeArticleListModel
 
-
+/**
+ * model to data
+ */
 fun ArticleModel.toDomain() = Article(
     author,
     chapterId,
