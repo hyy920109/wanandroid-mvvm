@@ -11,14 +11,17 @@ class LocalProvider(private val dbClient: DBClient) {
 
     //favorite api
     fun getAllFavoriteArticles(): Flowable<List<ArticleEntity>> {
-        return dbClient.getDB().favoriteDao().getAllFavoriteArticle()
+        return dbClient.getDB().articleDao().getAllFavoriteArticles()
     }
 
-    fun addFavoriteArticle(articleEntity: ArticleEntity) {
-        dbClient.getDB().favoriteDao().addFavoriteArticle(articleEntity)
+    fun getAllHistoryArticles(): Flowable<List<ArticleEntity>> {
+        return dbClient.getDB().articleDao().getAllHistoryArticles()
+    }
+    fun insertArticle(articleEntity: ArticleEntity) {
+        dbClient.getDB().articleDao().insertArticle(articleEntity)
     }
 
     fun deleteFavoriteArticle(id: Int) {
-        dbClient.getDB().favoriteDao().removeArticleFromFavorite(id = id)
+        dbClient.getDB().articleDao().removeArticleFromFavorite(id = id)
     }
 }

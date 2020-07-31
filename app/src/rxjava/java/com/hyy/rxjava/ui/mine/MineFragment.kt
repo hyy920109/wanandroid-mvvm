@@ -1,9 +1,11 @@
 package com.hyy.rxjava.ui.mine
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.hyy.rxjava.ui.history.HistoryActivity
 import com.hyy.wanandroid.base.BaseFragment
 import com.hyy.wanandroid.databinding.FragmentMineBinding
 
@@ -26,6 +28,11 @@ class MineFragment : BaseFragment<FragmentMineBinding>() {
     }
 
     override fun setupListeners() {
+        mBinding.itemMineHistory.setOnClickListener {
+            Intent(requireContext(), HistoryActivity::class.java).run {
+                startActivity(this)
+            }
+        }
     }
 
     override fun setupObservers() {

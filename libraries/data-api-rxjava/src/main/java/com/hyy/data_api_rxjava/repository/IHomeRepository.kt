@@ -7,12 +7,10 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 
 
-interface HomeRepository {
+interface IHomeRepository {
     fun requestHomeArticles(page: Int) : Single<HomeArticleList>
 
     fun fetchHomeBanner() : Single<List<Banner>>
 
-    fun addFavorite(article: Article)
 
-    fun getFavoriteArticles(): Flowable<List<Article>>
 }

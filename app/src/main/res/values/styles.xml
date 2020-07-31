@@ -58,7 +58,6 @@
 
     <style name="ToolbarTitleTextAppearance">
         <item name="fontFamily">@font/work_sans_medium</item>
-        <item name="android:textStyle">italic</item>
         <item name="android:textSize">17sp</item>
     </style>
 </resources>

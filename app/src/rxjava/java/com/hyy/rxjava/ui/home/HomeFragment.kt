@@ -64,6 +64,7 @@ class HomeFragment : RxBaseFragment<FragmentHomeBinding>() {
         adapter.setOnItemClickListener { adapter, view, position ->
             val item = adapter.getItem(position) as Article
             ArticleWebActivity.start(requireContext(), item.title, item.link)
+            homeViewModel.addArticleToHistory(adapter.getItem(position) as Article)
         }
     }
 

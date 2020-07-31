@@ -18,5 +18,7 @@ data class Article(
     val title: String,
     val userId: Int,
     val visible: Int,
-    val zan: Int
+    val zan: Int,
+    var favorite: Boolean = false,
+    var history: Boolean = false
 )

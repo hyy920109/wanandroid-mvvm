@@ -13,11 +13,11 @@ import com.hyy.data_rxjava.database.entities.ArticleEntity
 fun Article.toEntity() = ArticleEntity(
     author, chapterId, chapterName, collect, fresh,
     id, link, niceDate, niceShareDate, publishTime, shareDate, shareUser, superChapterName, title,
-    userId, visible, zan, favorite = false, history = false
+    userId, visible, zan, favorite, history
 )
 
 fun ArticleEntity.toDomain() = Article(
     author, chapterId, chapterName, collect, fresh, id,
     link, niceDate, niceShareDate, publishTime, shareDate, shareUser,
-    superChapterName, title, userId, visible, zan
+    superChapterName, title, userId, visible, zan, favorite, history
 )

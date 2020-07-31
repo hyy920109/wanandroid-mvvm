@@ -1,11 +1,10 @@
 package com.hyy.rxjava.ui.home
 
-import android.util.Log
-import androidx.lifecycle.*
 import com.hyy.data_api_rxjava.model.Article
 import com.hyy.data_api_rxjava.model.Banner
 import com.hyy.data_api_rxjava.model.HomeArticleList
-import com.hyy.data_api_rxjava.repository.HomeRepository
+import com.hyy.data_api_rxjava.repository.IHomeRepository
+import com.hyy.data_api_rxjava.repository.ILocalArticleRepository
 import com.hyy.rxjava.base.BaseViewModel
 import com.hyy.rxjava.data_base.ResultData
 import com.hyy.rxjava.ext.resolve
@@ -17,7 +16,10 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
-class HomeViewModel(private val homeRepository: HomeRepository) : BaseViewModel() {
+class HomeViewModel(
+    private val homeRepository: IHomeRepository,
+    private val localArticleRepository: ILocalArticleRepository
+) : BaseViewModel() {
 
     private val _homeData = BehaviorSubject.create<ResultData<HomeData>>()
     private val _moreArticles = BehaviorSubject.create<ResultData<HomeArticleList>>()
@@ -42,7 +44,7 @@ class HomeViewModel(private val homeRepository: HomeRepository) : BaseViewModel(
 
     private fun observeFavoriteArticles() {
         addDisposable {
-            homeRepository.getFavoriteArticles()
+            localArticleRepository.getFavoriteArticles()
                 .subscribeOn(Schedulers.io())
                 .doOnNext {
                     _favoriteArticleIds.onNext(it.map { article -> article.id }.toMutableSet())
@@ -52,12 +54,22 @@ class HomeViewModel(private val homeRepository: HomeRepository) : BaseViewModel(
     }
 
     fun addArticleToFavorite(article: Article) {
+            //需要去请求网络
+//        addDisposable {
+//            Completable.fromAction {
+//                localArticleRepository.addFavorite(article)
+//            }.subscribeOn(Schedulers.io())
+//                .doOnComplete { Log.d(TAG, "addArticleToFavorite: onComplete") }
+//                .doOnError { Log.d(TAG, "addArticleToFavorite: onError${it.message}") }
+//                .subscribe()
+//        }
+    }
+
+    fun addArticleToHistory(article: Article) {
         addDisposable {
             Completable.fromAction {
-                homeRepository.addFavorite(article)
+                localArticleRepository.addHistory(article)
             }.subscribeOn(Schedulers.io())
-                .doOnComplete { Log.d(TAG, "addArticleToFavorite: onComplete") }
-                .doOnError { Log.d(TAG, "addArticleToFavorite: onError${it.message}") }
                 .subscribe()
         }
     }

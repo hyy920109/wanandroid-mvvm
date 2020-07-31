@@ -28,5 +28,6 @@ data class ArticleEntity(
     var visible: Int,
     val zan: Int,
     var favorite: Boolean,//是否是收藏
-    var history: Boolean//是否是浏览过得文章
+    var history: Boolean,//是否是浏览过得文章
+    @ColumnInfo(name = "read_time") var readTime: Int = 0//浏览时间
 )

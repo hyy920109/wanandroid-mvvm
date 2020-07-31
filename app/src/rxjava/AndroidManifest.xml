@@ -21,6 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.hyy.rxjava.ui.web.ArticleWebActivity" />
+        <activity android:name="com.hyy.rxjava.ui.history.HistoryActivity" />
     </application>
 
 </manifest>
