@@ -33,6 +33,10 @@ class MineFragment : BaseFragment<FragmentMineBinding>() {
                 startActivity(this)
             }
         }
+
+        mBinding.cvLogin.setOnClickListener {
+            //去登录
+        }
     }
 
     override fun setupObservers() {
