@@ -3,6 +3,7 @@ package com.hyy.data_rxjava.network
 import com.hyy.data_rxjava.network.model.BannerModel
 import com.hyy.data_rxjava.network.model.BaseModel
 import com.hyy.data_rxjava.network.model.HomeArticleListModel
+import com.hyy.data_rxjava.network.model.LoginModel
 import io.reactivex.Single
 
 //
@@ -15,6 +16,10 @@ class RemoteProvider(private val networkClient: NetworkClient<WanAndroidApi>) {
 
     fun fetchHomeBanner(): Single<BaseModel<List<BannerModel>>> {
         return networkClient.api().getHomeBanner()
+    }
+
+    fun loginCall(username:String,password:String):Single<BaseModel<LoginModel>>{
+        return networkClient.api().loginCall(username, password)
     }
 
     companion object {

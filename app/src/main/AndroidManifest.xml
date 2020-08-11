@@ -6,6 +6,7 @@
     <application
         android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="n">
+        <activity android:name="com.hyy.rxjava.ui.login.LoginActivity" />
     </application>
 
 </manifest>

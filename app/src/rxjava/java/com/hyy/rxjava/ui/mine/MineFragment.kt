@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.hyy.rxjava.ui.history.HistoryActivity
+import com.hyy.rxjava.ui.login.LoginActivity
 import com.hyy.wanandroid.base.BaseFragment
 import com.hyy.wanandroid.databinding.FragmentMineBinding
 
@@ -36,6 +37,9 @@ class MineFragment : BaseFragment<FragmentMineBinding>() {
 
         mBinding.cvLogin.setOnClickListener {
             //去登录
+            Intent(requireContext(), LoginActivity::class.java).run {
+                startActivity(this)
+            }
         }
     }
 

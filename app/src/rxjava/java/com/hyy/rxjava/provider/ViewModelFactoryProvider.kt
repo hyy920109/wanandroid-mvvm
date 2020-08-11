@@ -2,6 +2,7 @@ package com.hyy.rxjava.provider
 
 import com.hyy.rxjava.ui.history.HistoryViewModelFactory
 import com.hyy.rxjava.ui.home.HomeViewModelFactory
+import com.hyy.rxjava.ui.login.LoginViewModelFactory
 
 
 object ViewModelFactoryProvider {
@@ -12,5 +13,9 @@ object ViewModelFactoryProvider {
 
     fun getHistoryViewModelFactory() : HistoryViewModelFactory {
         return HistoryViewModelFactory(RepositoryProvider.getLocalArticleRepo())
+    }
+
+    fun getLoginViewModelFactory():LoginViewModelFactory{
+        return  LoginViewModelFactory(RepositoryProvider.getLoginRepo())
     }
 }
