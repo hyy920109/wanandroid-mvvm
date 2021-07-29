@@ -23,6 +23,7 @@ fun <T> CoroutineScope.simpleRequest(api: (suspend () -> T)): LiveData<ResultDat
         //请求
         try {
             val data = api.invoke()
+            println("HYY---> ${Thread.currentThread().name}")
             emit(ResultData.success(data))
         } catch (e: Exception) {
             val error = resolveError(e)

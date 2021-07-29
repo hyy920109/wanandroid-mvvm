@@ -63,6 +63,8 @@ class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
             val simpleRequest = simpleRequest {
                 homeRepository.requestHomeArticles(page)
             }
+
+
             _homeArticles.addSource(simpleRequest)
         }
     }

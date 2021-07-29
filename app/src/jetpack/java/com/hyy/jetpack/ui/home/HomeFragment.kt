@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hyy.data_api_coroutine.model.Article
 import com.hyy.data_api_coroutine.model.Banner
@@ -16,11 +17,12 @@ import com.hyy.wanandroid.base.BaseFragment
 import com.hyy.jetpack.data_base.ResultData
 import com.hyy.jetpack.data_base.RequestStatus
 import com.hyy.wanandroid.databinding.FragmentHomeBinding
+import com.hyy.wanandroid.databinding.FragmentHomeJetpackBinding
 import com.youth.banner.indicator.CircleIndicator
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
-class HomeFragment : BaseFragment<FragmentHomeBinding>() {
+class HomeFragment : BaseFragment<FragmentHomeJetpackBinding>() {
 
     private val homeViewModel by viewModels<HomeViewModel> {
         ViewModelFactoryProvider.getHomeViewModelFactory()
@@ -30,10 +32,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         HomeArticleListAdapter()
     }
 
+    private val homeController by lazy {
+        HomeController()
+    }
+
     override fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ): FragmentHomeBinding = FragmentHomeBinding.inflate(inflater, container, false)
+    ): FragmentHomeJetpackBinding = FragmentHomeJetpackBinding.inflate(inflater, container, false)
 
     companion object {
         const val TAG = "HomeFragment"
@@ -45,14 +51,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     override fun setupViews() {
         mBinding.rvHomeList.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = this@HomeFragment.adapter
+//            layoutManager = LinearLayoutManager(requireContext())
+            adapter = homeController.adapter
+            itemAnimator = null
         }
 
-        adapter.loadMoreModule.isEnableLoadMore =true
-        adapter.loadMoreModule.setOnLoadMoreListener {
+//        adapter.loadMoreModule.isEnableLoadMore =true
+        mBinding.srlRefresh.setOnLoadMoreListener {
             homeViewModel.loadMore()
         }
+//        adapter.loadMoreModule.setOnLoadMoreListener {
+//        }
+
+//        lifecycleScope.launchWhenCreated {  }
     }
 
     override fun setupListeners() {
@@ -77,10 +88,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             when(status) {
                 RequestStatus.SUCCESS -> {
                     data?.apply {
-                        banners.apply {
-                            setupBannerView(this)
-                        }
-                        adapter.setList(homeArticleList.articleList)
+//                        banners.apply {
+//                            setupBannerView(this)
+//                        }
+//                        adapter.setList(homeArticleList.articleList)
+                        homeController.setData(this)
                     }
                     mBinding.statusLayout.showContent()
                     adapter.loadMoreModule.loadMoreComplete()
@@ -98,12 +110,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     }
 
     private fun setupBannerView(banners: List<Banner>) {
-        mBinding.banner.apply {
-            addBannerLifecycleObserver(this@HomeFragment)
-            adapter = BannerItemAdapter(banners)
-            indicator = CircleIndicator(context)
-            start()
-        }
+//        mBinding.banner.apply {
+//            addBannerLifecycleObserver(this@HomeFragment)
+//            adapter = BannerItemAdapter(banners)
+//            indicator = CircleIndicator(context)
+//            start()
+//        }
     }
 
     private fun setupArticleList(resultData: ResultData<HomeArticleList>?) {
@@ -111,15 +123,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
            when(status) {
                RequestStatus.SUCCESS -> {
                    data?.apply {
-                       adapter.addData(articleList)
-                       adapter.loadMoreModule.loadMoreComplete()
+                       mBinding.srlRefresh.finishLoadMore(0,true, false)
+//                       adapter.addData(articleList)
+//                       adapter.loadMoreModule.loadMoreComplete()
+                       homeController.addMoreArticles(this.articleList)
                    }
                }
                RequestStatus.EMPTY -> {
-                        adapter.loadMoreModule.loadMoreEnd(true)
+                   mBinding.srlRefresh.finishLoadMoreWithNoMoreData()
+                   adapter.loadMoreModule.loadMoreEnd(true)
                }
                RequestStatus.ERROR -> {
-                   adapter.loadMoreModule.loadMoreFail()
+                   mBinding.srlRefresh.finishLoadMore(false)
                    Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
                }
                RequestStatus.START -> {
