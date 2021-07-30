@@ -12,7 +12,7 @@ class NetworkClient<out T>(val baseUrl: String, clazz: Class<T>) {
 
     private val httpLogger = object : HttpLoggingInterceptor.Logger {
         override fun log(message: String) {
-            Log.d("WanAndroid", message)
+            Log.d("HYY-WanAndroid", message)
         }
 
     }

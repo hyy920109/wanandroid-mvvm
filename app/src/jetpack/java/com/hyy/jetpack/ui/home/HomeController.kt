@@ -6,10 +6,16 @@ import com.hyy.data_api_coroutine.model.Banner
 import com.hyy.jetpack.ui.home.models.HomeArticleModel
 import com.hyy.jetpack.ui.home.models.homeBanner
 
+typealias OnItemClickListener = (type: Int, data: Any?) -> Unit
+const val ITEM_TYPE_BANNER = 0
+const val ITEM_TYPE_ARTICLE = 1
+
 class HomeController : EpoxyController() {
 
     private val banners = mutableListOf<Banner>()
     private val articles = mutableListOf<Article>()
+
+    private var onItemClickListener: OnItemClickListener? = null
 
     override fun buildModels() {
         if (banners.isNotEmpty() && articles.isNotEmpty()) {
@@ -19,9 +25,12 @@ class HomeController : EpoxyController() {
             }
 
             articles.forEachIndexed { index, article ->
-                HomeArticleModel(article)
-                    .id("HomeArticleModel $index")
-                    .addTo(this)
+                HomeArticleModel(article) {
+                    onItemClickListener?.invoke(ITEM_TYPE_ARTICLE, it)
+                }.apply {
+                    id("HomeArticleModel $index")
+                    addTo(this@HomeController)
+                }
             }
 
         }
@@ -40,5 +49,9 @@ class HomeController : EpoxyController() {
     fun addMoreArticles(articles: List<Article>) {
         this.articles.addAll(articles)
         requestModelBuild()
+    }
+
+    fun setOnItemClickListener(onItemClickListener: OnItemClickListener) {
+        this.onItemClickListener = onItemClickListener
     }
 }

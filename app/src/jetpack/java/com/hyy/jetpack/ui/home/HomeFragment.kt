@@ -28,12 +28,18 @@ class HomeFragment : BaseFragment<FragmentHomeJetpackBinding>() {
         ViewModelFactoryProvider.getHomeViewModelFactory()
     }
 
-    private val adapter: HomeArticleListAdapter by lazy {
-        HomeArticleListAdapter()
-    }
-
     private val homeController by lazy {
-        HomeController()
+        HomeController().apply {
+            setOnItemClickListener { type, data ->
+                when(type) {
+                    ITEM_TYPE_ARTICLE -> {
+                        if (data is Article) {
+                            ArticleWebActivity.start(requireContext(), data.title, data.link)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun getViewBinding(
@@ -51,26 +57,17 @@ class HomeFragment : BaseFragment<FragmentHomeJetpackBinding>() {
 
     override fun setupViews() {
         mBinding.rvHomeList.apply {
-//            layoutManager = LinearLayoutManager(requireContext())
             adapter = homeController.adapter
             itemAnimator = null
         }
 
-//        adapter.loadMoreModule.isEnableLoadMore =true
+        mBinding.srlRefresh.setEnableRefresh(false)
         mBinding.srlRefresh.setOnLoadMoreListener {
             homeViewModel.loadMore()
         }
-//        adapter.loadMoreModule.setOnLoadMoreListener {
-//        }
-
-//        lifecycleScope.launchWhenCreated {  }
     }
 
     override fun setupListeners() {
-        adapter.setOnItemClickListener { adapter, view, position ->
-            val item = adapter.getItem(position) as Article
-            ArticleWebActivity.start(requireContext(), item.title, item.link)
-        }
     }
 
     @ExperimentalCoroutinesApi
@@ -88,14 +85,9 @@ class HomeFragment : BaseFragment<FragmentHomeJetpackBinding>() {
             when(status) {
                 RequestStatus.SUCCESS -> {
                     data?.apply {
-//                        banners.apply {
-//                            setupBannerView(this)
-//                        }
-//                        adapter.setList(homeArticleList.articleList)
                         homeController.setData(this)
                     }
                     mBinding.statusLayout.showContent()
-                    adapter.loadMoreModule.loadMoreComplete()
                 }
                 RequestStatus.ERROR -> {
                     Log.d(TAG, "setupHomeData: error")
@@ -109,29 +101,17 @@ class HomeFragment : BaseFragment<FragmentHomeJetpackBinding>() {
         }
     }
 
-    private fun setupBannerView(banners: List<Banner>) {
-//        mBinding.banner.apply {
-//            addBannerLifecycleObserver(this@HomeFragment)
-//            adapter = BannerItemAdapter(banners)
-//            indicator = CircleIndicator(context)
-//            start()
-//        }
-    }
-
     private fun setupArticleList(resultData: ResultData<HomeArticleList>?) {
        resultData?.apply {
            when(status) {
                RequestStatus.SUCCESS -> {
                    data?.apply {
                        mBinding.srlRefresh.finishLoadMore(0,true, false)
-//                       adapter.addData(articleList)
-//                       adapter.loadMoreModule.loadMoreComplete()
                        homeController.addMoreArticles(this.articleList)
                    }
                }
                RequestStatus.EMPTY -> {
                    mBinding.srlRefresh.finishLoadMoreWithNoMoreData()
-                   adapter.loadMoreModule.loadMoreEnd(true)
                }
                RequestStatus.ERROR -> {
                    mBinding.srlRefresh.finishLoadMore(false)

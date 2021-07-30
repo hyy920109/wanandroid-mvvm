@@ -1,58 +1,88 @@
 package com.hyy.jetpack.ext
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
-import com.hyy.data_coroutine.RESPONSE_MSG_UNKNOWN
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hyy.data_api_coroutine.exception.ExceptionWrapper
-import com.hyy.jetpack.data_base.ResultData
-import com.hyy.jetpack.data_base.RequestStatus
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onEach
+import com.hyy.data_coroutine.RESPONSE_MSG_UNKNOWN
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import java.io.IOException
 
-fun <T> CoroutineScope.simpleRequest(api: (suspend () -> T)): LiveData<ResultData<T>> {
-
-    return liveData {
-        //请求开始
-        emit(ResultData.start())
-
-        //请求
+fun <T> ViewModel.simpleRequest(
+    api: suspend () -> T,
+    loadingBlock: (() -> Unit)? = null,
+    successBlock: (T) -> Unit,
+    errorBlock: (e: ExceptionWrapper) -> Unit
+) {
+    viewModelScope.launch {
         try {
-            val data = api.invoke()
-            println("HYY---> ${Thread.currentThread().name}")
-            emit(ResultData.success(data))
+            loadingBlock?.invoke()
+            //想多个接口同时异步调用的话 需要用viewModelScope.async{}
+            val data = api()
+            successBlock(data)
         } catch (e: Exception) {
+            println("HYY-WanAndroid --->$e")
             val error = resolveError(e)
-            emit(ResultData.error<T>(error.errorMsg, error.errorCode))
+            errorBlock(error)
         }
     }
 }
 
-inline fun <T> CoroutineScope.request(crossinline block: (suspend () -> ResultData<T>)): Flow<ResultData<T>> {
-    return flow {
-        emit(ResultData.start())
-        val data = block.invoke()
-        emit(data)
-    }.catch { e ->
-        val exception = resolveError(e)
-        emit(
-            ResultData(
-                data = null,
-                status = RequestStatus.ERROR,
-                errorMsg = exception.errorMsg,
-                errorCode = exception.errorCode
-            )
-        )
-    }.onEach {
-        Log.d("Network", "data status -->${it.status}")
+fun <T, T2> ViewModel.combineRequest(
+    api: suspend () -> T,
+    api2: suspend () -> T2,
+    loadingBlock: () -> Unit,
+    successBlock: (T, T2) -> Unit,
+    errorBlock: (e: ExceptionWrapper) -> Unit
+) {
+    viewModelScope.launch {
+        loadingBlock()
+        flow {
+            val t1 = api()
+            emit(t1)
+        }
+            .combine(flow<T2> {
+                val t2 = api2()
+                emit(t2)
+            }) { t, t2 ->
+                println("HYY combine requestLayout")
+                successBlock(t, t2)
+            }.catch { e ->
+                val error = resolveError(e)
+                errorBlock(error)
+            }
+            .collect {
+
+            }
     }
 }
 
-fun CoroutineScope.resolveError(e: Throwable): ExceptionWrapper {
+//类似与rxJava的zip请求
+inline fun <T, T2> ViewModel.zipRequest(
+    crossinline api: suspend () -> T,
+    crossinline api2: suspend () -> T2,
+    crossinline loadingBlock: () -> Unit,
+    crossinline successBlock: (T, T2) -> Unit,
+    crossinline errorBlock: (e: ExceptionWrapper) -> Unit
+) {
+    viewModelScope.launch {
+        try {
+            loadingBlock()
+            //想多个接口同时异步调用的话 需要用viewModelScope.async{}
+            val dataFuture = viewModelScope.async { api() }
+            val data2Future = viewModelScope.async { api2() }
+            val data = dataFuture.await()
+            val data2 = data2Future.await()
+            successBlock(data, data2)
+        } catch (e: Exception) {
+            println("HYY-WanAndroid --->$e")
+            val error = resolveError(e)
+            errorBlock(error)
+        }
+    }
+}
+
+fun resolveError(e: Throwable): ExceptionWrapper {
     return if (e is ExceptionWrapper) {
         e
     } else if (e is IOException) {

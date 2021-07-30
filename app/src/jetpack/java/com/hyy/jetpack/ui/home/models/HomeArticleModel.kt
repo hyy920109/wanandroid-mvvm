@@ -6,14 +6,9 @@ import com.hyy.wanandroid.R
 import com.hyy.wanandroid.databinding.HomeItemArticleBinding
 
 class HomeArticleModel(
-    private val article: Article
+    private val article: Article,
+    private val listener: ((article: Article) -> Unit)? = null
 ) : ViewBindingKotlinModel<HomeItemArticleBinding>(R.layout.home_item_article) {
-
-    private var listener: (() -> Unit)? = null
-
-    fun setOnClickListener(listener: () -> Unit) {
-        this.listener = listener
-    }
 
     override fun HomeItemArticleBinding.bind() {
         articleName.text = article.title
@@ -22,7 +17,7 @@ class HomeArticleModel(
         articleTime.text = article.niceDate
 
         root.setOnClickListener {
-            listener?.invoke()
+            listener?.invoke(article)
         }
     }
 
